@@ -289,6 +289,8 @@ public class Orders {
     private void setBaseSettings(BaseSettings wrapper) {
         wrapper.setAppId(paySetting.getAppId());
         wrapper.setMchId(paySetting.getMchId());
+        wrapper.setSubAppId(paySetting.getSubAppId());
+        wrapper.setSubMchId(paySetting.getSubMchId());
     }
 
     private void sign(BaseSettings wrapper, SortedMap<String, Object> generals) {
@@ -504,6 +506,12 @@ public class Orders {
         @JsonProperty("mch_id")
         private String mchId;
 
+        @JsonProperty("sub_mch_id")
+        private String subMchId;
+
+        @JsonProperty("sub_appid")
+        private String subAppId;
+
         @JsonProperty("nonce_str")
         private String nonce;
 
@@ -515,6 +523,22 @@ public class Orders {
 
         public void setMchId(String mchId) {
             this.mchId = mchId;
+        }
+
+        public String getSubAppId() {
+            return subAppId;
+        }
+
+        public void setSubAppId(String subAppId) {
+            this.subAppId = subAppId;
+        }
+
+        public String getSubMchId() {
+            return subMchId;
+        }
+
+        public void setSubMchId(String subMchId) {
+            this.subMchId = subMchId;
         }
 
         public String getNonce() {

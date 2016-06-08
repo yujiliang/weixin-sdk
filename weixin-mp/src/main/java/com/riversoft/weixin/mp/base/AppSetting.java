@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by exizhai on 9/26/2015.
@@ -16,7 +18,11 @@ public class AppSetting {
 
     private static Logger logger = LoggerFactory.getLogger(AppSetting.class);
 
-    private static AppSetting appSetting = null;
+    private static AppSetting defaultAppSetting = null;
+
+    private static String[] defaultClasspathFile = new String[]{"wx-mp-settings-test.xml", "wx-mp-settings.xml"};
+
+    private static Map<String, AppSetting> appSettingMap = new HashMap<>();
 
     private String appId;
     private String secret;
@@ -32,20 +38,40 @@ public class AppSetting {
     }
 
     public static void setDefault(AppSetting appSetting) {
-        AppSetting.appSetting = appSetting;
+        AppSetting.defaultAppSetting = appSetting;
     }
 
     public static AppSetting defaultSettings() {
-        if (appSetting == null) {
+        if (defaultAppSetting == null) {
             loadFromSystemProperties();
         }
 
+        for (String aDefaultClasspathFile : defaultClasspathFile) {
+            defaultAppSetting = appSettingMap.get(aDefaultClasspathFile);
+            if (defaultAppSetting == null) {
+                loadFromClasspath(aDefaultClasspathFile);
+                defaultAppSetting = appSettingMap.get(aDefaultClasspathFile);
+            }
+            if (defaultAppSetting != null) {
+                break;
+            }
+        }
+
+        if (defaultAppSetting == null) {
+            throw new WxRuntimeException(999, "当前系统没有设置缺省的appId和secret,请使用setDefault方法或者在classpath下面创建wx-mp-settings.xml文件.");
+        }
+        return defaultAppSetting;
+    }
+
+    public static AppSetting getSetting(String classpathFile) {
+        AppSetting appSetting = appSettingMap.get(classpathFile);
         if (appSetting == null) {
-            loadFromClasspath();
+            loadFromClasspath(classpathFile);
+            appSetting = appSettingMap.get(classpathFile);
         }
 
         if (appSetting == null) {
-            throw new WxRuntimeException(999, "当前系统没有设置缺省的appId和secret,请使用setDefault方法或者在classpath下面创建wx-mp-settings.xml文件.");
+            throw new WxRuntimeException(999, "当前系统没有设置商户信息,请在classpath下面创建"+classpathFile+"文件.");
         }
         return appSetting;
     }
@@ -60,30 +86,43 @@ public class AppSetting {
             } else {
                 try {
                     AppSetting setting = XmlObjectMapper.defaultMapper().fromXml(xml, AppSetting.class);
-                    appSetting = setting;
+                    defaultAppSetting = setting;
                 } catch (IOException e) {
                 }
             }
         }
     }
 
-    private static void loadFromClasspath() {
+    private static void loadFromClasspath(String classpathFile) {
         try {
-            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-mp-settings-test.xml");
-
-            if (inputStream == null) {
-                inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-mp-settings.xml");
-            }
-
+            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(classpathFile);
             if (inputStream != null) {
                 String xml = IOUtils.toString(inputStream);
                 AppSetting setting = XmlObjectMapper.defaultMapper().fromXml(xml, AppSetting.class);
-                appSetting = setting;
+                appSettingMap.put(classpathFile, setting);
             }
         } catch (IOException e) {
-            logger.error("read settings from wx-mp-settings-test.xml or wx-mp-settings.xml failed:", e);
+            logger.error("read settings from "+classpathFile+" failed:", e);
         }
+
     }
+//    private static void loadFromClasspath() {
+//        try {
+//            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-mp-settings-test.xml");
+//
+//            if (inputStream == null) {
+//                inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-mp-settings.xml");
+//            }
+//
+//            if (inputStream != null) {
+//                String xml = IOUtils.toString(inputStream);
+//                AppSetting setting = XmlObjectMapper.defaultMapper().fromXml(xml, AppSetting.class);
+//                defaultAppSetting = setting;
+//            }
+//        } catch (IOException e) {
+//            logger.error("read settings from wx-mp-settings-test.xml or wx-mp-settings.xml failed:", e);
+//        }
+//    }
 
     public String getAppId() {
         return appId;

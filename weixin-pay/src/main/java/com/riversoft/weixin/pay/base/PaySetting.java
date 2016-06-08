@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 商户信息
@@ -18,23 +20,46 @@ public class PaySetting {
 
     private static Logger logger = LoggerFactory.getLogger(PaySetting.class);
 
-    private static PaySetting paySetting = null;
+    private static PaySetting defaultPaySetting = null;
+
+    private static Map<String, PaySetting> paySettingMap = new HashMap<>();
+
+    private static String[] defaultClasspathFile = new String[]{"wx-pay-settings-test.xml", "wx-pay-settings.xml"};
 
     public static void setDefault(PaySetting paySetting) {
-        PaySetting.paySetting = paySetting;
+        PaySetting.defaultPaySetting = paySetting;
     }
 
     public static PaySetting defaultSetting() {
-        if (paySetting == null) {
+        if (defaultPaySetting == null) {
             loadFromSystemProperties();
         }
 
+        for (String aDefaultClasspathFile : defaultClasspathFile) {
+            defaultPaySetting = paySettingMap.get(aDefaultClasspathFile);
+            if (defaultPaySetting == null) {
+                loadFromClasspath(aDefaultClasspathFile);
+                defaultPaySetting = paySettingMap.get(aDefaultClasspathFile);
+            }
+            if (defaultPaySetting != null) {
+                break;
+            }
+        }
+        if (defaultPaySetting == null) {
+            throw new WxRuntimeException(999, "当前系统没有设置缺省的商户信息,请使用setDefault方法或者在classpath下面创建wx-pay-settings.xml文件.");
+        }
+        return defaultPaySetting;
+    }
+
+    public static PaySetting getSetting(String classpathFile) {
+        PaySetting paySetting = paySettingMap.get(classpathFile);
         if (paySetting == null) {
-            loadFromClasspath();
+            loadFromClasspath(classpathFile);
+            paySetting = paySettingMap.get(classpathFile);
         }
 
         if (paySetting == null) {
-            throw new WxRuntimeException(999, "当前系统没有设置缺省的商户信息,请使用setDefault方法或者在classpath下面创建wx-pay-settings.xml文件.");
+            throw new WxRuntimeException(999, "当前系统没有设置商户信息,请在classpath下面创建"+classpathFile+"文件.");
         }
         return paySetting;
     }
@@ -49,30 +74,44 @@ public class PaySetting {
             } else {
                 try {
                     PaySetting setting = XmlObjectMapper.defaultMapper().fromXml(xml, PaySetting.class);
-                    paySetting = setting;
+                    defaultPaySetting = setting;
                 } catch (IOException e) {
                 }
             }
         }
     }
 
-    private static void loadFromClasspath() {
+    private static void loadFromClasspath(String classpathFile) {
         try {
-            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-pay-settings-test.xml");
-
-            if (inputStream == null) {
-                inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-pay-settings.xml");
-            }
-
+            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(classpathFile);
             if (inputStream != null) {
                 String xml = IOUtils.toString(inputStream);
                 PaySetting setting = XmlObjectMapper.defaultMapper().fromXml(xml, PaySetting.class);
-                paySetting = setting;
+                paySettingMap.put(classpathFile, setting);
             }
         } catch (IOException e) {
-            logger.error("read settings from wx-pay-settings-test.xml or wx-pay-settings.xml failed:", e);
+            logger.error("read settings from "+classpathFile+" failed:", e);
         }
+
     }
+
+//    private static void loadFromClasspath() {
+//        try {
+//            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-pay-settings-test.xml");
+//
+//            if (inputStream == null) {
+//                inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("wx-pay-settings.xml");
+//            }
+//
+//            if (inputStream != null) {
+//                String xml = IOUtils.toString(inputStream);
+//                PaySetting setting = XmlObjectMapper.defaultMapper().fromXml(xml, PaySetting.class);
+//                defaultPaySetting = setting;
+//            }
+//        } catch (IOException e) {
+//            logger.error("read settings from wx-pay-settings-test.xml or wx-pay-settings.xml failed:", e);
+//        }
+//    }
 
 
     /**
@@ -84,6 +123,16 @@ public class PaySetting {
      * 商户的appId
      */
     private String appId;
+
+    /**
+     * 子商户号
+     */
+    private String subMchId;
+
+    /**
+     * 子商户公众账号ID
+     */
+    private String subAppId;
 
     /**
      * 秘钥
@@ -114,6 +163,22 @@ public class PaySetting {
 
     public void setAppId(String appId) {
         this.appId = appId;
+    }
+
+    public String getSubMchId() {
+        return subMchId;
+    }
+
+    public void setSubMchId(String subMchId) {
+        this.subMchId = subMchId;
+    }
+
+    public String getSubAppId() {
+        return subAppId;
+    }
+
+    public void setSubAppId(String subAppId) {
+        this.subAppId = subAppId;
     }
 
     public String getKey() {
