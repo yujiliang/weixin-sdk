@@ -1,10 +1,8 @@
 package com.riversoft.weixin.mp.menu;
 
-import com.riversoft.weixin.common.menu.Menu;
-import com.riversoft.weixin.common.menu.MenuItem;
-import com.riversoft.weixin.common.menu.MenuType;
-import com.riversoft.weixin.common.menu.Rule;
+import com.riversoft.weixin.common.menu.*;
 import com.riversoft.weixin.common.user.Gender;
+import com.riversoft.weixin.mp.menu.bean.MenuConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,6 +21,12 @@ public class MenusTest {
     @Test
     public void testGet() {
         Menu menu = Menus.defaultMenus().get();
+        Assert.assertNotNull(menu);
+    }
+
+    @Test
+    public void testGetMenuConfig() {
+        MenuConfig menu = Menus.defaultMenus().getMenuConfig();
         Assert.assertNotNull(menu);
     }
 
@@ -62,7 +66,7 @@ public class MenusTest {
 
         }
         {
-            Menu menuFemale = new Menu();
+            RuleMenu menuFemale = new RuleMenu();
 
             MenuItem menuWant = new MenuItem().key("want").type(MenuType.click).name("女人我要");
             MenuItem menuRefer = new MenuItem().key("refer").type(MenuType.click).name("女人推荐");
