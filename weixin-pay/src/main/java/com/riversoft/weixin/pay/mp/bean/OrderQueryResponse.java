@@ -2,6 +2,7 @@ package com.riversoft.weixin.pay.mp.bean;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.riversoft.weixin.common.util.Date2Deserializer;
 import com.riversoft.weixin.common.util.DateDeserializer;
 import com.riversoft.weixin.pay.base.BaseResponse;
 
@@ -59,7 +60,7 @@ public class OrderQueryResponse extends BaseResponse {
     private String attach;
 
     @JsonProperty("time_end")
-    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonDeserialize(using = Date2Deserializer.class)
     private Date timeEnd;
 
     @JsonProperty("trade_state_desc")
