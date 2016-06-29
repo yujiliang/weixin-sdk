@@ -7,6 +7,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class UnifiedOrderRequest {
 
+    @JsonProperty("sub_appid")
+    private String subAppId;
+
+    @JsonProperty("sub_mch_id")
+    private String subMchId;
+
     @JsonProperty("device_info")
     private String deviceInfo;
 
@@ -49,6 +55,25 @@ public class UnifiedOrderRequest {
 
     @JsonProperty("openid")
     private String openId;
+
+    @JsonProperty("sub_openid")
+    private String subOpenId;
+
+    public String getSubAppId() {
+        return subAppId;
+    }
+
+    public void setSubAppId(String subAppId) {
+        this.subAppId = subAppId;
+    }
+
+    public String getSubMchId() {
+        return subMchId;
+    }
+
+    public void setSubMchId(String subMchId) {
+        this.subMchId = subMchId;
+    }
 
     public String getDeviceInfo() {
         return deviceInfo;
@@ -176,5 +201,13 @@ public class UnifiedOrderRequest {
 
     public void setOpenId(String openId) {
         this.openId = openId;
+    }
+
+    public String getSubOpenId() {
+        return subOpenId;
+    }
+
+    public void setSubOpenId(String subOpenId) {
+        this.subOpenId = subOpenId;
     }
 }

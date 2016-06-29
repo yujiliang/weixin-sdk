@@ -12,6 +12,11 @@ import java.util.Date;
  * @borball on 5/15/2016.
  */
 public class OrderQueryResponse extends BaseResponse {
+    @JsonProperty("sub_appid")
+    private String subAppId;
+
+    @JsonProperty("sub_mch_id")
+    private String subMchId;
 
     @JsonProperty("device_info")
     private String deviceInfo;
@@ -65,6 +70,22 @@ public class OrderQueryResponse extends BaseResponse {
 
     @JsonProperty("trade_state_desc")
     private String tradeStateDesc;
+
+    public String getSubMchId() {
+        return subMchId;
+    }
+
+    public void setSubMchId(String subMchId) {
+        this.subMchId = subMchId;
+    }
+
+    public String getSubAppId() {
+        return subAppId;
+    }
+
+    public void setSubAppId(String subAppId) {
+        this.subAppId = subAppId;
+    }
 
     public String getDeviceInfo() {
         return deviceInfo;

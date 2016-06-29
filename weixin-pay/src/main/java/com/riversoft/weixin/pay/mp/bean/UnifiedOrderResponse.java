@@ -8,6 +8,12 @@ import com.riversoft.weixin.pay.base.BaseResponse;
  */
 public class UnifiedOrderResponse extends BaseResponse {
 
+    @JsonProperty("sub_appid")
+    private String subAppId;
+
+    @JsonProperty("sub_mch_id")
+    private String subMchId;
+
     @JsonProperty("device_info")
     private String deviceInfo;
 
@@ -19,6 +25,22 @@ public class UnifiedOrderResponse extends BaseResponse {
 
     @JsonProperty("code_url")
     private String codeUrl;
+
+    public String getSubAppId() {
+        return subAppId;
+    }
+
+    public void setSubAppId(String subAppId) {
+        this.subAppId = subAppId;
+    }
+
+    public String getSubMchId() {
+        return subMchId;
+    }
+
+    public void setSubMchId(String subMchId) {
+        this.subMchId = subMchId;
+    }
 
     public String getDeviceInfo() {
         return deviceInfo;
