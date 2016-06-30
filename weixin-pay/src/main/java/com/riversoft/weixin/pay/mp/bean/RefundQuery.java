@@ -8,6 +8,12 @@ import com.riversoft.weixin.pay.base.BaseResponse;
  */
 public class RefundQuery extends BaseResponse {
 
+    @JsonProperty("sub_appid")
+    private String subAppId;
+
+    @JsonProperty("sub_mch_id")
+    private String subMchId;
+
     @JsonProperty("transaction_id")
     private String transactionId;
 
@@ -30,6 +36,22 @@ public class RefundQuery extends BaseResponse {
     private int refundCount;
 
     //TODO others
+
+    public String getSubAppId() {
+        return subAppId;
+    }
+
+    public void setSubAppId(String subAppId) {
+        this.subAppId = subAppId;
+    }
+
+    public String getSubMchId() {
+        return subMchId;
+    }
+
+    public void setSubMchId(String subMchId) {
+        this.subMchId = subMchId;
+    }
 
     public String getTransactionId() {
         return transactionId;
