@@ -22,6 +22,12 @@ public class PaymentNotification extends BaseResponse {
     @JsonProperty("mch_id")
     private String mchId;
 
+    @JsonProperty("sub_appid")
+    private String subAppId;
+
+    @JsonProperty("sub_mch_id")
+    private String subMchId;
+
     @JsonProperty("nonce_str")
     private String nonce;
 
@@ -94,6 +100,22 @@ public class PaymentNotification extends BaseResponse {
 
     public void setMchId(String mchId) {
         this.mchId = mchId;
+    }
+
+    public String getSubAppId() {
+        return subAppId;
+    }
+
+    public void setSubAppId(String subAppId) {
+        this.subAppId = subAppId;
+    }
+
+    public String getSubMchId() {
+        return subMchId;
+    }
+
+    public void setSubMchId(String subMchId) {
+        this.subMchId = subMchId;
     }
 
     public String getNonce() {

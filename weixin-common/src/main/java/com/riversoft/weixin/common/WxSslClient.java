@@ -23,6 +23,7 @@ import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 
 /**
@@ -40,7 +41,12 @@ public class WxSslClient {
         SSLContext sslcontext = null;
         try {
             keyStore = KeyStore.getInstance("PKCS12");
-            FileInputStream inputStream = new FileInputStream(new File(certPath));
+            InputStream inputStream;
+            if (certPath.startsWith("classpath:")) {
+                inputStream = WxSslClient.class.getResourceAsStream(certPath.substring(10));
+            } else {
+                inputStream = new FileInputStream(new File(certPath));
+            }
             keyStore.load(inputStream, certPassword.toCharArray());
             sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, certPassword.toCharArray()).build();
         } catch (Exception e) {
